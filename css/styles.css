@@ -11,7 +11,6 @@ body {
 	background-color: #fdfdfd;
 	margin: 0;
   position:relative;
- 
 }
 ul, li {
 	font-family: Arial, Helvetica, sans-serif;
@@ -40,8 +39,6 @@ article, aside, canvas, details, figcaption, figure, footer, header, hgroup, men
   background-color: #f3f3f3;
   min-height: 100%;
   max-width: 100%;
- 
-
 }
 #footer {
   background-color: #444;
@@ -51,7 +48,6 @@ article, aside, canvas, details, figcaption, figure, footer, header, hgroup, men
   padding: 25px;
   text-align: center;
   text-transform: uppercase;
- 
 }
 /* ====================== Navigation ====================== */
 nav {
@@ -73,6 +69,7 @@ nav h1 a {
 }
 #breadcrumb {
     padding: 10px 40px 16px;
+    position: relative;
     list-style: none;
     background-color: #eee;
     font-size: 17px;
@@ -149,22 +146,16 @@ nav h1 a {
   list-style: outside none none;
   margin: 0;
   padding: 30px 15px 60px;
-  text-align: center;
- 
-  
+  text-align: center; 
 }
 #restaurants-list li {
   background-color: #fff;
   border: 2px solid #ccc;
-  
   font-family: Arial,sans-serif;
   margin: 15px;
   min-height: 380px;
-  /* padding: 0 0 25px; */
   text-align: left;
   width: 270px;
-
- 
 }
 #restaurants-list .restaurant-img {
   background-color: #ccc;
@@ -185,8 +176,7 @@ nav h1 a {
 }
 #restaurants-list p {
   margin: 0;
-  font-size: 11pt;
- 
+  font-size: 11pt; 
 }
 #restaurants-list li .restaurant-info{
   padding: 0 25px 20px;
@@ -231,7 +221,6 @@ nav h1 a {
   bottom: 0;
   width: calc(50% - 50px);
   position: fixed;
-
 }
 #restaurant-name {
   color: #39324D;
@@ -267,11 +256,9 @@ nav h1 a {
   border-top: 1px solid #fff;
   padding: 140px 40px 30px;
   width: 50%;
-  
 }
 #reviews-container {
   padding: 30px 40px 80px;
-
 }
 #reviews-container h2 {
   color: #533c20;
@@ -298,14 +285,13 @@ nav h1 a {
 }
 
 
-.reviewInfo .review-name{
+.review-info .review-name{
   font-size: 20px;
   color: #ddd;
   padding: 0;
 }
 
-.reviewInfo{
-
+.review-info{
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -313,13 +299,11 @@ nav h1 a {
   padding-left: 20px;
   padding-right: 20px;
   background-color: #39324D;
-  
 }
-.reviewInfo .date{
+.review-info .date{
   color: #ddd;
   font-size: 16px;
   padding: 0;
-
 }
 .ratings{
   background: orange;

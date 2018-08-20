@@ -163,7 +163,7 @@ createReviewHTML = (review) => {
   const div = document.createElement('div');
   div.append(name);
   div.append(date);
-  div.className = 'reviewInfo';
+  div.className = 'review-info';
   li.appendChild(div);
 
   const rating = document.createElement('p');
