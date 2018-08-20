@@ -22,7 +22,7 @@ initMap = () => {
         scrollWheelZoom: false
       });
       L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.jpg70?access_token={mapboxToken}', {
-        mapboxToken: '<your MAPBOX API KEY HERE>',
+        mapboxToken: 'pk.eyJ1IjoiZGluZGVyYSIsImEiOiJjamtsazl5NWIxd2E3M3Btemp4Njh6eGtrIn0.azq835pUPzRoLuJUX-7b1A',
         maxZoom: 18,
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
           '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
@@ -89,10 +89,12 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   const image = document.getElementById('restaurant-img');
   image.className = 'restaurant-img'
   image.src = DBHelper.imageUrlForRestaurant(restaurant);
-
+  image.srcset = DBHelper.imageSrcsetForRestaurant(restaurant);
+  image.sizes = "(max-width: 350px) 300px, (max-width: 650px) 600px, (min-width: 651px) 800px";
+  image.alt = " ";
   const cuisine = document.getElementById('restaurant-cuisine');
   cuisine.innerHTML = restaurant.cuisine_type;
-
+  //(max-width: 450px) 400px,
   // fill operating hours
   if (restaurant.operating_hours) {
     fillRestaurantHoursHTML();
@@ -150,18 +152,28 @@ createReviewHTML = (review) => {
   const li = document.createElement('li');
   const name = document.createElement('p');
   name.innerHTML = review.name;
+  name.className = 'review-name';
   li.appendChild(name);
 
   const date = document.createElement('p');
+  date.className = 'date';
   date.innerHTML = review.date;
   li.appendChild(date);
 
+  const div = document.createElement('div');
+  div.append(name);
+  div.append(date);
+  div.className = 'reviewInfo';
+  li.appendChild(div);
+
   const rating = document.createElement('p');
   rating.innerHTML = `Rating: ${review.rating}`;
+  rating.className = 'ratings'
   li.appendChild(rating);
 
   const comments = document.createElement('p');
   comments.innerHTML = review.comments;
+  comments.className = 'comments'
   li.appendChild(comments);
 
   return li;

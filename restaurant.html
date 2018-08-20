@@ -1,11 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0">
   <!-- Normalize.css for better cross-browser consistency -->
   <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
   <!-- Main CSS file -->
   <link rel="stylesheet" href="css/styles.css" type="text/css">
+  <link rel="stylesheet" href="css/media-queries.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ==" crossorigin=""/>
   <title>Restaurant Info</title>
 </head>
@@ -27,31 +30,31 @@
   <!-- End header -->
 
   <!-- Beginning main -->
-  <main id="maincontent">
+  <main id="maincontent" role="main">
     <!-- Beginning map -->
-    <section id="map-container">
-      <div id="map"></div>
+    <section id="map-container" role="region">
+      <div id="map" aria-labelledby="map" role="application"></div>
     </section>
     <!-- End map -->
     <!-- Beginning restaurant -->
-    <section id="restaurant-container">
-      <h1 id="restaurant-name"></h1>
+    <section id="restaurant-container" role="presentation">
+      <h1 id="restaurant-name" aria-label="restaurant"></h1>
       <img id="restaurant-img">
       <p id="restaurant-cuisine"></p>
-      <p id="restaurant-address"></p>
+      <p id="restaurant-address" aria-label="address"></p>
       <table id="restaurant-hours"></table>
     </section>
     <!-- end restaurant -->
     <!-- Beginning reviews -->
-    <section id="reviews-container">
-      <ul id="reviews-list"></ul>
+    <section id="reviews-container" role="presentation">
+      <ul id="reviews-list" role="list"></ul>
     </section>
     <!-- End reviews -->
   </main>
   <!-- End main -->
 
   <!-- Beginning footer -->
-  <footer id="footer">
+  <footer id="footer" role="contentinfo">
     Copyright (c) 2017 <a href="/"><strong>Restaurant Reviews</strong></a> All Rights Reserved.
   </footer>
   <!-- End footer -->
@@ -60,6 +63,7 @@
   <!-- Database helpers -->
   <script type="text/javascript" src="js/dbhelper.js"></script>
   <!-- Main javascript file -->
+  <script type="text/javascript"  src="/js/registersw.js"></script>
   <script type="text/javascript" src="js/restaurant_info.js"></script>
   <!-- Google Maps -->
  <!--  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA_tKbW6A5pQ-eupxI56myUnHLqYCzOjKo&libraries=places&callback=initMap"></script> -->
