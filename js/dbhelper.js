@@ -146,8 +146,8 @@ class DBHelper {
    */
   static urlForRestaurant(restaurant) {
     // return (`./restaurant.html?id=${restaurant.id}`);
-  
-    return (`./data/restaurant.html?id=${restaurant.id}`);
+  const url = '/';
+    return (`${url}/data/restaurant.html?id=${restaurant.id}`);
   }
 
   /**
