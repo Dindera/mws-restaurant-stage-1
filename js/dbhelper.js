@@ -146,8 +146,8 @@ class DBHelper {
    */
   static urlForRestaurant(restaurant) {
     // return (`./restaurant.html?id=${restaurant.id}`);
-  const url = 'https://dindera.github.io/restaurant-review-app/';
-    return (`${url}/restaurant.html?id=${restaurant.id}`);
+  // const url = 'https://dindera.github.io/restaurant-review-app/';
+    return (`./restaurant.html?id=${restaurant.id}`);
   }
 
   /**
