@@ -27,9 +27,7 @@
     #footer{
         font-size: 10pt;  
        }
-       .inside #footer {
-        width: calc(100% - 50px);
-       }
+      
 }
 
 @media screen and (max-width: 814px){
@@ -58,9 +56,7 @@
     #footer{
         font-size: 10pt;  
        }
-       .inside #footer {
-        width: calc(100% - 50px);
-       }
+   
 }
 
 @media screen and (min-width: 814px){
@@ -103,7 +99,7 @@
     font-size: 10pt;  
    }
    .inside #footer {
-    width: calc(100% - 50px);
+    width: 100%;
     position: fixed;
    }
 }
