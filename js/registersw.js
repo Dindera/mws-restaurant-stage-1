@@ -1,4 +1,5 @@
 //Check for service worker update
+const REPO =  '/restaurant-review-app/';
 const _updateReady = (worker) => {
     console.log('New Version Available');
      worker.postMessage({ action: 'skipWaiting' });
@@ -19,7 +20,7 @@ if (worker.state === 'installed') {
 
 if ('serviceWorker' in navigator) {
 
-navigator.serviceWorker.register('/sw.js').then(reg => {
+navigator.serviceWorker.register('/sw.js', {scope: REPO}).then(reg => {
 
 if (reg.waiting) {
     _updateReady(reg.waiting);
