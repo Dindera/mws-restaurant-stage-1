@@ -30,6 +30,12 @@
       
 }
 
+@media screen and (max-width: 430px){
+    .review-info .review-name{
+        width: 100%;
+    }
+}
+
 @media screen and (max-width: 814px){
  
     #reviews-list li{

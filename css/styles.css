@@ -205,6 +205,27 @@ nav h1 a {
 #restaurants-list li a:hover {
   color: #aaa;
 }
+
+#restaurant-hours{
+  width: 300px;
+}
+
+
+
+#restaurant-hours td:nth-child(even){
+  background-color: rgba(233, 227, 227, 0.829);
+  border: 1px solid rosybrown;
+
+}
+
+tr td:nth-child(odd){
+ padding: 10px;
+}
+
+#restaurant-hours tr:nth-child(odd){
+  background-color: rgba(233, 227, 227, 0.829);
+  
+}
 /* ====================== Restaurant Details ====================== */
 .inside header {
   position: fixed;
@@ -294,9 +315,11 @@ nav h1 a {
 
 
 .review-info .review-name{
-  font-size: 20pt;
+  font-size: 18pt;
   color: #ddd;
   padding: 0;
+  line-height: 1;
+  margin: 10px;
 }
 
 .review-info{
@@ -310,8 +333,10 @@ nav h1 a {
 }
 .review-info .date{
   color: #ddd;
-  font-size: 16pt;
+  font-size: 15pt;
   padding: 0;
+  line-height: 1;
+  margin: 10px;
 }
 .ratings{
   background: orange;
