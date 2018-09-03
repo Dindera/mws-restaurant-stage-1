@@ -20,7 +20,7 @@ if (worker.state === 'installed') {
 
 if ('serviceWorker' in navigator) {
 
-navigator.serviceWorker.register('/sw.js', {scope: REPO}).then(reg => {
+navigator.serviceWorker.register('sw.js', {scope: REPO}).then(reg => {
 
 if (reg.waiting) {
     _updateReady(reg.waiting);
