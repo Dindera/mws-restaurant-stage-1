@@ -134,12 +134,13 @@ nav h1 a {
   background-color: white;
   border: 1px solid #fff;
   font-family: Arial,sans-serif;
-  font-size: 11pt;
+  font-size: 13pt;
   height: 35px;
   letter-spacing: 0;
   margin: 10px;
   padding: 0 10px;
-  width: 200px;
+  width: 250px;
+  border-radius: 4px;
 }
 
 
@@ -153,12 +154,13 @@ nav h1 a {
 }
 #restaurants-list li {
   background-color: #fff;
-  border: 2px solid #ccc;
   font-family: Arial,sans-serif;
   margin: 15px;
   min-height: 380px;
   text-align: left;
   width: 270px;
+  border-radius: 5px;
+  box-shadow: 0 2px 3px rgba(0,0,0,0.37);
 }
 #restaurants-list .restaurant-img {
   background-color: #ccc;
@@ -166,6 +168,8 @@ nav h1 a {
   max-width: 100%;
   min-height: 248px;
   min-width: 100%;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
 }
 #restaurants-list li h1 {
   color: #39324D;
@@ -186,15 +190,16 @@ nav h1 a {
 }
 #restaurants-list li a {
   background-color: #6c4f70;
-  border-bottom: 3px solid #eee;
   color: #fff;
   display: inline-block;
   font-size: 10pt;
   margin: 15px 0 0;
-  padding: 8px 30px 10px;
+  padding: 10px 30px 10px;
   text-align: center;
   text-decoration: none;
   text-transform: uppercase;
+  box-shadow: 0 3px 1px #6c4f70;
+  border-radius: 4px;
 }
 
 #restaurants-list li a:hover {
@@ -322,4 +327,8 @@ nav h1 a {
 #restaurant-hours td {
   color: #666;
   font-size: 18px;
+}
+
+input{
+  border-radius: 10px;
 }
