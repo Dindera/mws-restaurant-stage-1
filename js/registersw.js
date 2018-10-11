@@ -1,12 +1,11 @@
 //Check for service worker update
-const REPO =  '/restaurant-review-app/';
+// const REPO =  '/restaurant-review-app/';
+const REPO =  '/';
 const _updateReady = (worker) => {
     console.log('New Version Available');
      worker.postMessage({ action: 'skipWaiting' });
   
 };
-
-
 
 const _trackInstalling = (worker) => {
 worker.addEventListener('statechange', () => {

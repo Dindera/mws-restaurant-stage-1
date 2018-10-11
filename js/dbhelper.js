@@ -1,36 +1,81 @@
+(function () {
+  'use strict';
+
+  if (!('indexedDB' in window)) {
+    console.log('This browser doesn\'t support IndexedDB');
+    return;
+  }
+});
+
 /**
  * Common database helper functions.
  */
 class DBHelper {
-
-  /**
+/**
    * Database URL.
    * Change this to restaurants.json file location on your server.
    */
   static get DATABASE_URL() {
-    // const port = 5500 // Change this to your server port
-    const port = 'restaurant-review-app'
-    // return `http://localhost:${port}/data/restaurants.json`;
-    return `https://dindera.github.io/${port}/data/restaurants.json`;
+    const port = 1337 // Change this to your server port
+
+    return `http://localhost:${port}/restaurants`;
+
+    // return `https://dindera.github.io/${port}/data/restaurants.json`;
   }
+
 
   /**
    * Fetch all restaurants.
    */
+
   static fetchRestaurants(callback) {
-    let xhr = new XMLHttpRequest();
-    xhr.open('GET', DBHelper.DATABASE_URL);
-    xhr.onload = () => {
-      if (xhr.status === 200) { // Got a success response from server!
-        const json = JSON.parse(xhr.responseText);
-        const restaurants = json.restaurants;
-        callback(null, restaurants);
-      } else { // Oops!. Got an error from server.
-        const error = (`Request failed. Returned status of ${xhr.status}`);
-        callback(error, null);
-      }
-    };
-    xhr.send();
+
+
+
+    const dbPromise = idb.open('restaurant-db', 4, function (upgradeDB) {
+      
+          if (!upgradeDB.objectStoreNames.contains('restaurant-store')) {
+            upgradeDB.createObjectStore('restaurant-store', { keyPath: 'id' });
+          }
+ 
+    });
+
+    function getDbData() {
+      return dbPromise.then(db=>{
+         const tx = db.transaction('restaurant-store')
+           .objectStore('restaurant-store');
+           return tx.getAll();
+           });
+    }
+
+    function fulfillResult(){
+      getDbData().then(restaurants =>{
+        return callback(null, restaurants);
+      });
+    }
+
+
+    fetch(DBHelper.DATABASE_URL)
+      .then(function (response) {
+        const restaurants = response.json();
+        return restaurants;
+      }).then(restaurants => {
+        dbPromise.then(db => {
+          const tx = db.transaction('restaurant-store', 'readwrite');
+          const restaurantStore = tx.objectStore('restaurant-store');
+          for (const restaurant of restaurants) {
+            restaurantStore.put(restaurant);
+          }
+          return tx.complete;
+        }).then(()=>{
+          console.log('restaurants added');
+        });
+        return restaurants;
+      }).then(function (restaurants) {
+        return callback(null, restaurants);
+      }).catch(() => {
+         return fulfillResult();
+      });
   }
 
   /**
@@ -146,7 +191,7 @@ class DBHelper {
    */
   static urlForRestaurant(restaurant) {
     // return (`./restaurant.html?id=${restaurant.id}`);
-  // const url = 'https://dindera.github.io/restaurant-review-app/';
+    // const url = 'https://dindera.github.io/restaurant-review-app/';
     return (`./restaurant.html?id=${restaurant.id}`);
   }
 
@@ -154,36 +199,37 @@ class DBHelper {
    * Restaurant image URL.
    */
   static imageUrlForRestaurant(restaurant) {
-    return (`/src/images/${restaurant.photograph}`);
+    return (`/src/img/${restaurant.id}-300_small.jpg`);
   }
 
-   /**
-   *  Image Srcset for Index page.
-   */
-  static imageSrcsetForIndex(restaurant){
-    return (`${restaurant.photograph_index}`);
+  /**
+  *  Image Srcset for Index page.
+  */
+  static imageSrcsetForIndex(restaurant) {
+    return (`src/images/${restaurant.id}-300_small.jpg 1x, src/images/${restaurant.id}-600_medium_2x.jpg 2x`);
   }
 
-   /**
-   *  Image Srcset for Restaurant page.
-   */
-  static imageSrcsetForRestaurant(restaurant){
-    return (`${restaurant.photograph_restaurant}`);
+  /**
+  *  Image Srcset for Restaurant page.
+  */
+  static imageSrcsetForRestaurant(restaurant) {
+    return (`src/images/${restaurant.id}-300_small.jpg 300w, src/images/${restaurant.id}-600_medium_2x.jpg 600w, src/images/${restaurant.id}-800_large_2x.jpg 800w`);
   }
 
   /**
    * Map marker for a restaurant.
    */
-   static mapMarkerForRestaurant(restaurant, map) {
+  static mapMarkerForRestaurant(restaurant, map) {
     // https://leafletjs.com/reference-1.3.0.html#marker  
     const marker = new L.marker([restaurant.latlng.lat, restaurant.latlng.lng],
-      {title: restaurant.name,
-      alt: restaurant.name,
-      url: DBHelper.urlForRestaurant(restaurant)
+      {
+        title: restaurant.name,
+        alt: restaurant.name,
+        url: DBHelper.urlForRestaurant(restaurant)
       })
-      marker.addTo(newMap);
+    marker.addTo(newMap);
     return marker;
-  } 
+  }
   /* static mapMarkerForRestaurant(restaurant, map) {
     const marker = new google.maps.Marker({
       position: restaurant.latlng,
@@ -194,6 +240,7 @@ class DBHelper {
     );
     return marker;
   } */
+
 
 }
 
