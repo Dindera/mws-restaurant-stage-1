@@ -20,7 +20,7 @@
   <header>
     <!-- Beginning nav -->
     <nav>
-      <h1><a href="/">Restaurant Reviews</a></h1>
+      <img src="/src/cutlery.svg" style="width: 70px;"><h1><a href="/">Restaurant Reviews</a></h1>
     </nav>
     <!-- Beginning breadcrumb -->
     <ul id="breadcrumb" aria-label=Breadcrumb>
@@ -49,7 +49,29 @@
     <!-- end restaurant -->
     <!-- Beginning reviews -->
     <section id="reviews-container" role="presentation">
+      <div id="reviews-header"></div>
       <ul id="reviews-list" role="list"></ul>
+    </section>
+    <section  id="reviews-container">
+     <div id="reviews-info">
+       <h2>Add Review</h2>
+        <form action="">
+            <label for="name">
+              <input type="text" id="name" placeholder="Your Name">
+            </label>
+            <label for="rate">
+              <input type="number" id="rate" placeholder="Rating">
+            </label><br>
+            <label for="comments">
+            <textarea name="comments" placeholder="Write your comments here.." id="comments" ></textarea>
+            </label>
+            <br>
+            <label for="submit">
+                <button id="submit">Submit</button>
+            </label>
+          </form>
+     </div>
+     
     </section>
     <!-- End reviews -->
   </main>

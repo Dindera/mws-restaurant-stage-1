@@ -163,16 +163,44 @@ createRestaurantHTML = (restaurant) => {
   image.srcset = DBHelper.imageSrcsetForIndex(restaurant);
   image.sizes = "300px";
   image.alt = `photograph of ${restaurant.name} restaurant`;
-  li.append(image);
+  // li.append(image);
+
+  
+  
+  const headName = document.createElement('div');
+  headName.classList.add('head_name');
+  // divInfo.append(headName);
+  li.append(headName);
+  headName.append(image);
+
 
   const divInfo = document.createElement('div');
   divInfo.className = 'restaurant-info';
   li.tabIndex = "0";
   li.append(divInfo);
-
+  
   const name = document.createElement('h1');
   name.innerHTML = restaurant.name;
   divInfo.append(name);
+
+  const fav_div = document.createElement('div');
+  fav_div.classList.add('fav_list');
+  headName.append(fav_div);
+
+  const favorite = document.createElement('input');
+  favorite.id ='is_favorite';
+  favorite.type = "checkbox";
+  favorite.name = "favorite";
+
+  const label = document.createElement('label');
+  label.setAttribute('for', 'is_favorite');
+  label.id = "checkbox-label";
+
+  fav_div.append(favorite);
+  fav_div.append(label);
+  headName.append(fav_div);
+
+ 
 
   const neighborhood = document.createElement('p');
   neighborhood.innerHTML = restaurant.neighborhood;
