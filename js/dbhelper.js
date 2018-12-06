@@ -18,7 +18,7 @@ class DBHelper {
   static get DATABASE_URL() {
     const port = 1337 // Change this to your server port
 
-    return `http://localhost:${port}/restaurants`;
+    return `http://localhost:${port}`;
 
     // return `https://dindera.github.io/${port}/data/restaurants.json`;
   }
@@ -29,8 +29,6 @@ class DBHelper {
    */
 
   static fetchRestaurants(callback) {
-
-
 
     const dbPromise = idb.open('restaurant-db', 4, function (upgradeDB) {
       
@@ -55,7 +53,7 @@ class DBHelper {
     }
 
 
-    fetch(DBHelper.DATABASE_URL)
+    fetch(`${DBHelper.DATABASE_URL}/restaurants/`)
       .then(function (response) {
         const restaurants = response.json();
         return restaurants;
@@ -67,16 +65,63 @@ class DBHelper {
             restaurantStore.put(restaurant);
           }
           return tx.complete;
-        }).then(()=>{
-          console.log('restaurants added');
+        }).then(() => {
         });
         return restaurants;
       }).then(function (restaurants) {
         return callback(null, restaurants);
       }).catch(() => {
          return fulfillResult();
-      });
+      }); 
   }
+
+static fetchReviews(id, callback){
+
+  const dbPromise = idb.open('review-db', 2, function (upgradeDB) {
+      
+    if (!upgradeDB.objectStoreNames.contains('review-store')) {
+      upgradeDB.createObjectStore('review-store', { keyPath: 'id' });
+    }
+
+});
+
+function getDbReview() {
+return dbPromise.then(db=>{
+   const tx = db.transaction('review-store')
+     .objectStore('review-store');
+     return tx.getAll();
+     });
+}
+
+function displayResult(){
+getDbReview().then(reviews =>{
+  return callback(null, reviews);
+});
+}
+
+  fetch(`${DBHelper.DATABASE_URL}/reviews/?restaurant_id=${id}`)
+  .then(function (response) {
+    const reviews = response.json();
+    return reviews;
+  }).then(reviews => {
+    dbPromise.then(db => {
+      const tx = db.transaction('review-store', 'readwrite');
+      const reviewStore = tx.objectStore('review-store');
+      for (const review of reviews) {
+        reviewStore.put(review);
+      }
+      return tx.complete;
+    }).then(() => {
+      console.log('reviews added');
+    });
+    return reviews;
+  }).then(function (reviews) {
+    return callback(null, reviews);
+  }).catch(() => {
+     return displayResult();
+  });
+}
+
 
   /**
    * Fetch a restaurant by its ID.
@@ -96,6 +141,26 @@ class DBHelper {
       }
     });
   }
+
+    /**
+   * Fetch a review by its ID.
+   */
+  static fetchReviewById(id, cb) {
+    // fetch all reviews with proper error handling.
+    DBHelper.fetchReviews((error, reviews) => {
+      if (error) {
+        cb(error, null);
+      } else {
+        const review = reviews.find(r => r.id == id);
+        if (review) { // Got the review
+          cb(null, review);
+        } else { // Restaurant does not exist in the database
+          cb('Review does not exist', null);
+        }
+      }
+    });
+  }
+
 
   /**
    * Fetch restaurants by a cuisine type with proper error handling.
@@ -190,9 +255,9 @@ class DBHelper {
    * Restaurant page URL.
    */
   static urlForRestaurant(restaurant) {
-    // return (`./restaurant.html?id=${restaurant.id}`);
-    // const url = 'https://dindera.github.io/restaurant-review-app/';
     return (`./restaurant.html?id=${restaurant.id}`);
+    // const url = 'https://dindera.github.io/restaurant-review-app/';
+    // return (`/restaurants/${restaurant.id}`);
   }
 
   /**
@@ -215,7 +280,12 @@ class DBHelper {
   static imageSrcsetForRestaurant(restaurant) {
     return (`src/images/${restaurant.id}-300_small.jpg 300w, src/images/${restaurant.id}-600_medium_2x.jpg 600w, src/images/${restaurant.id}-800_large_2x.jpg 800w`);
   }
-
+  /**
+  * Get Reviews for restaurants
+  */
+  // static reviewsForRestaurant(reviews){
+  //   return (`./restaurant.html?id=${reviews.id}/${reviews}/`);
+  // }
   /**
    * Map marker for a restaurant.
    */

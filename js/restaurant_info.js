@@ -99,7 +99,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
     fillRestaurantHoursHTML();
   }
   // fill reviews
-  fillReviewsHTML();
+  DBHelper.fetchReviews(restaurant.id, fillReviewsHTML);
 }
 
 /**
@@ -124,7 +124,12 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
 /**
  * Create all reviews HTML and add them to the webpage.
  */
-fillReviewsHTML = (reviews = self.restaurant.reviews) => {
+fillReviewsHTML = (error, reviews) => {
+  self.restaurant.reviews = reviews;
+
+  if (error) {
+    console.log('No reviews', error);
+  }
   const container = document.getElementById('reviews-container');
   const title = document.createElement('h2');
   title.innerHTML = 'Reviews';
@@ -138,6 +143,7 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
   }
   const ul = document.getElementById('reviews-list');
   reviews.forEach(review => {
+    // review = DBHelper.fetchReviewById(id, (error, reviews));
     ul.appendChild(createReviewHTML(review));
   });
   container.appendChild(ul);
@@ -148,32 +154,67 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
  */
 createReviewHTML = (review) => {
   const li = document.createElement('li');
-  const name = document.createElement('p');
+  const name = document.createElement('h3');
   name.innerHTML = review.name;
   name.className = 'review-name';
   li.appendChild(name);
 
-  const date = document.createElement('p');
-  date.className = 'date';
-  date.innerHTML = review.date;
-  li.appendChild(date);
+  const rating = document.createElement('p');
+  rating.classList.add('rating');
+  rating.innerHTML = `Rating: ${review.rating}`;
+  rating.dataset.rating = review.rating;
+  li.appendChild(rating);
 
   const div = document.createElement('div');
   div.append(name);
-  div.append(date);
+  div.append(rating);
   div.className = 'review-info';
   li.appendChild(div);
 
-  const rating = document.createElement('p');
-  rating.innerHTML = `Rating: ${review.rating}`;
-  rating.className = 'ratings'
-  li.appendChild(rating);
+  const createdAt = document.createElement('p');
+  createdAt.classList.add('createdAt');
+  const createdDate = new Date(review.createdAt).toLocaleDateString();
+  createdAt.innerHTML = `Added:- <strong>${createdDate}</strong>`;
+  li.appendChild(createdAt);
+
+  const updatedAt = document.createElement('p');
+  const updatedDate = new Date(review.updatedAt).toLocaleDateString();
+  updatedAt.innerHTML = `Updated:- <strong>${updatedDate}</strong>`;
+  updatedAt.classList.add('updatedAt');
+  li.appendChild(updatedAt);
+
+  const date = document.createElement('div');
+  date.append(createdAt);
+  date.append(updatedAt);
+  date.className = 'review-date';
+  li.appendChild(date);
+
+  // const date = document.createElement('p');
+  // date.className = 'date';
+  // date.innerHTML = review.date;
+  // li.appendChild(date);
+
+  // const div = document.createElement('div');
+  // div.append(name);
+  // div.append(date);
+  // div.className = 'review-info';
+  // li.appendChild(div);
+
+  // const rating = document.createElement('p');
+  // rating.innerHTML = `Rating: ${review.rating}`;
+  // rating.className = 'ratings'
+  // li.appendChild(rating);
+
+
+  // const comments = document.createElement('p');
+  // comments.innerHTML = review.comments;
+  // comments.className = 'comments'
+  // li.appendChild(comments);
 
   const comments = document.createElement('p');
+  comments.classList.add('comments');
   comments.innerHTML = review.comments;
-  comments.className = 'comments'
   li.appendChild(comments);
-
   return li;
 }
 
