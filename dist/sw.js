@@ -99,7 +99,7 @@ self.addEventListener("fetch", event => {
     if (getUrl.origin === location.origin) {
         //console.log("fetching url :" + getUrl.pathname);
   
-        if (getUrl.pathname === "/" || getUrl.pathname ===  "/index.html") {
+        if (getUrl.pathname === "" || getUrl.pathname ===  "/index.html") {
             event.respondWith(caches.match("/"));
             if(getUrl.pathname.includes('.jpg')){
                 event.respondWith(caches.match("src/offline2.jpg"));
