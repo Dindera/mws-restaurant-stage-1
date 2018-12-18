@@ -1,3 +1,4 @@
+
 const CACHENAME = "restaurant_app_v1";
 const CACHE_PHOTOS = 'restaurant-app-photos'; 
 const REPO = "";
@@ -6,11 +7,9 @@ const ALLCACHE = [
     CACHE_PHOTOS
 ];
 
-
 /*
 Install caches in storage
 */
-
 self.addEventListener("install", event => {
     event.waitUntil(
         caches.open(CACHENAME).then(cache => {
@@ -25,9 +24,10 @@ self.addEventListener("install", event => {
                 'js/registersw.js',
                 'js/restaurant_info.js',
                 'manifest.json',
-                'sw.js',
                 'src/offline.jpg',
                 'src/cutlery.svg',
+                'src/Heart-03.svg',
+                'src/Heart-04.svg',
                 'restaurant.html',
                 'restaurant.html?id=1', 
                 'restaurant.html?id=2', 
@@ -38,7 +38,7 @@ self.addEventListener("install", event => {
                 'restaurant.html?id=7', 
                  'restaurant.html?id=8', 
                  'restaurant.html?id=9', 
-                 'restaurant.html?id=10', 
+                 'restaurant.html?id=10',
                  'https://unpkg.com/leaflet@1.3.1/dist/leaflet.js',
                  'https://unpkg.com/leaflet@1.3.1/dist/leaflet.css',
                  'https://leafletjs.com/reference-1.3.0.html#marker',     
@@ -76,33 +76,30 @@ self.addEventListener("fetch", event => {
 
     if (getUrl.origin === location.origin) {
         if (getUrl.pathname === "/" || getUrl.pathname === REPO + "/") {
-            event.respondWith(caches.match(REPO + "/index.html"));
-        //    return;
+            event.respondWith(caches.match(REPO + "index.html"));
+ 
         }
          if(getUrl.pathname.startsWith('/src/')){
+                 // Get images from cache if no network
         event.respondWith(servePhotos(event.request));
         // return;
-    } else {// handle other request from  this site
-        console.log('OTHRSAAAAA', getUrl.pathname);
-        event.respondWith(caches.match(event.request));
-    }
-        // Get images from cache if no network
-      
+    } else {
+        // handle other request from  this site
+        event.respondWith(caches.match(event.request)
+        // .then(res => {
+        //     return res || fetch(event.request);
+        // })
+    );
+    }   
        return;
     }
-
         event.respondWith(
             caches.match(event.request).then(response => {
-                // if(response){
-                //     return response;
-                // }else {
-                //     return fetch(event.request);
-                // }
-
                 return response || fetch(event.request);
             })
-        )
+        );
 });
+
 
 /*
 // Open cache storage for images
@@ -123,9 +120,9 @@ function servePhotos(request){
   });
 }
 
-
 self.addEventListener("message", event => {
     if (event.data.action === "skipWaiting") {
         self.skipWaiting();
     }
 });
+
