@@ -23,7 +23,8 @@
     "gulp-eslint": "^5.0.0",
     "gulp-minify": "^3.1.0",
     "gulp-sourcemaps": "^2.6.4",
-    "gulp-uglify": "^3.0.1"
+    "gulp-uglify": "^3.0.1",
+    "require": "^2.4.20"
   },
   "description": "---\r #### _Three Stage Course Material Project - Restaurant Reviews_",
   "main": "Gruntfile.js",

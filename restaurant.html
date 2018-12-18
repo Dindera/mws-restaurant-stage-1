@@ -43,7 +43,7 @@
       <div class="restaurant_name_favorite">
           <h2 id="restaurant-name" aria-label="restaurant"></h2>
           <div class="restaurant_favorite">
-            <input type="checkbox" id="is_favorite" class="is_favorite" name="favorite">
+            <input type="checkbox" id="is_favorite" class="is_favorite" role="checkbox" name="favorite">
             <label for="is_favorite" id="checkbox_label" class="is_favorite"></label>
           </div>
       </div>
@@ -59,27 +59,29 @@
       <div id="reviews-header"></div>
       <ul id="reviews-list" role="list"></ul>
     </section>
-    <section  id="reviews-container">
+    <section id="reviews-container" role="presentation">
      <div id="reviews-info">
-       <h2>Add Review</h2>
-        <form action="">
-            <label for="name">
-              <input type="text" id="name" placeholder="Your Name">
+       <h2 id="addReview">Add Review</h2>
+        <form id="newReview" role="form">
+            <input type="hidden" value=`${id}` name="id" id="id">
+            <label>
+              <input type="text" name="reviewName" id="name" placeholder="Your Name" role="textbox" required>
             </label>
-            <label for="rate">
-              <input type="number" id="rate" placeholder="Rating">
+            <label>
+              <input type="number" name="reviewRate" id="rate" placeholder="Rating" role="textbox" required>
             </label><br>
-            <label for="comments">
-            <textarea name="comments" placeholder="Write your comments here.." id="comments" ></textarea>
+            <label>
+            <textarea name="comments"  placeholder="Write your comments here.." id="comments" role="textbox" required></textarea>
             </label>
             <br>
-            <label for="submit">
-                <button id="submit">Submit</button>
+            <label>
+                <button id="submit" type="submit">Submit</button>
+                
             </label>
           </form>
      </div>
-     
     </section>
+   
     <!-- End reviews -->
   </main>
   <!-- End main -->
@@ -95,8 +97,9 @@
   <!-- Database helpers -->
   <script type="application/javascript" src="js/dbhelper.js"></script>
   <!-- Main javascript file -->
+  <script type="application/javascript" src="js/restaurant_info.js"></script>
   <script type="application/javascript"  src="js/registersw.js"></script>
-   <script type="application/javascript" src="js/restaurant_info.js"></script>
+ 
   
  <!--  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA_tKbW6A5pQ-eupxI56myUnHLqYCzOjKo&libraries=places&callback=initMap"></script> -->
   <!-- End scripts -->

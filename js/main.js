@@ -188,19 +188,52 @@ createRestaurantHTML = (restaurant) => {
   headName.append(fav_div);
 
   const favorite = document.createElement('input');
-  favorite.id ='is_favorite';
+  favorite.className = "is_favorite";
+  //favorite.id ='is_favorite';
+  favorite.setAttribute('role', 'checkbox');
+  // favorite.setAttribute('aria-labelledby', 'Restaurant Favorite');
   favorite.type = "checkbox";
   favorite.name = "favorite";
-
   const label = document.createElement('label');
-  label.setAttribute('for', 'is_favorite');
-  label.id = "checkbox-label";
+  // label.setAttribute('for', 'is_favorite');
+  label.className = "checkbox-label";
 
+  if(restaurant.is_favorite == 'true' ){
+    console.log(restaurant.is_favorite)
+    favorite.checked = true;
+    favorite.setAttribute('aria-checked', 'true');
+    favorite.innerHTML = `Remove ${restaurant.name} as a favorite`;
+    favorite.title = `Remove ${restaurant.name} as a favorite`;
+  } else{
+    console.log(restaurant.is_favorite)
+    favorite.checked = false;
+    favorite.setAttribute('aria-checked', 'false');
+    favorite.innerHTML = `Add ${restaurant.name} as a favorite`;
+    favorite.title = `Add ${restaurant.name} as a favorite`;
+  }
+  console.log('Checked : ', favorite.checked);
+
+
+  favorite.addEventListener('click', () => {
+    console.log('Checked Click : ', favorite.checked);
+    if( favorite.checked){
+      favorite.setAttribute('aria-checked', 'true');
+      favorite.innerHTML = `Remove ${restaurant.name} as a favorite`;
+      favorite.title = `Remove ${restaurant.name} as a favorite`; 
+      // doFavouriteBackgroundSync(restaurant.id);
+     return DBHelper.saveFavorite(restaurant.id, 'true');  
+    }
+    else {
+      favorite.setAttribute('aria-checked', 'false');
+      favorite.innerHTML = `Add ${restaurant.name} as a favorite`;
+      favorite.title = `Add ${restaurant.name} as a favorite`; 
+      // doFavouriteBackgroundSync(restaurant.id);
+     return DBHelper.saveFavorite(restaurant.id, 'false');
+    }
+   });
   fav_div.append(favorite);
   fav_div.append(label);
   headName.append(fav_div);
-
- 
 
   const neighborhood = document.createElement('p');
   neighborhood.innerHTML = restaurant.neighborhood;
@@ -217,6 +250,10 @@ createRestaurantHTML = (restaurant) => {
 
   return li
 }
+
+
+
+
 
 /**
  * Add markers for current restaurants to the map.

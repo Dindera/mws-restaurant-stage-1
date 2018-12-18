@@ -1,5 +1,8 @@
+// export default DBHelper
+
+
 (function () {
-  'use strict';
+  'use strict'
 
   if (!('indexedDB' in window)) {
     console.log('This browser doesn\'t support IndexedDB');
@@ -7,14 +10,31 @@
   }
 });
 
+const dbPromise = idb.open('restaurant-db', 4, function (upgradeDB) {
+
+  switch (upgradeDB.oldVersion) {
+    case 0:
+     let restaurantStore =  upgradeDB.createObjectStore('restaurant-store', { keyPath: 'id' });
+     restaurantStore.createIndex('restaurantIndex', 'is_favorite');
+     case 1:
+      let reviewStore = upgradeDB.createObjectStore('review-store', { keyPath: 'id' });
+      reviewStore.createIndex('reviewIndex', 'restaurant_id');
+      upgradeDB.createObjectStore('favorite-store', { keyPath: 'is_favorite' });
+      case 2: 
+      upgradeDB.createObjectStore('offline-store', {keyPath: 'id', autoIncrement: true});
+
+  }
+
+});
+
 /**
  * Common database helper functions.
  */
 class DBHelper {
-/**
-   * Database URL.
-   * Change this to restaurants.json file location on your server.
-   */
+  /**
+     * Database URL.
+     * Change this to restaurants.json file location on your server.
+     */
   static get DATABASE_URL() {
     const port = 1337 // Change this to your server port
 
@@ -29,25 +49,16 @@ class DBHelper {
    */
 
   static fetchRestaurants(callback) {
-
-    const dbPromise = idb.open('restaurant-db', 4, function (upgradeDB) {
-      
-          if (!upgradeDB.objectStoreNames.contains('restaurant-store')) {
-            upgradeDB.createObjectStore('restaurant-store', { keyPath: 'id' });
-          }
- 
-    });
-
     function getDbData() {
-      return dbPromise.then(db=>{
-         const tx = db.transaction('restaurant-store')
-           .objectStore('restaurant-store');
-           return tx.getAll();
-           });
+      return dbPromise.then(db => {
+        const tx = db.transaction('restaurant-store')
+          .objectStore('restaurant-store');
+        return tx.getAll();
+      });
     }
 
-    function fulfillResult(){
-      getDbData().then(restaurants =>{
+    function fulfillResult() {
+      getDbData().then(restaurants => {
         return callback(null, restaurants);
       });
     }
@@ -65,63 +76,56 @@ class DBHelper {
             restaurantStore.put(restaurant);
           }
           return tx.complete;
-        }).then(() => {
-        });
+        })
         return restaurants;
       }).then(function (restaurants) {
         return callback(null, restaurants);
       }).catch(() => {
-         return fulfillResult();
-      }); 
+        return fulfillResult();
+      });
   }
 
-static fetchReviews(id, callback){
+  static fetchReviews(id, callback) {
 
-  const dbPromise = idb.open('review-db', 2, function (upgradeDB) {
-      
-    if (!upgradeDB.objectStoreNames.contains('review-store')) {
-      upgradeDB.createObjectStore('review-store', { keyPath: 'id' });
+    function getDbReview() {
+      return dbPromise.then(db => {
+        const tx = db.transaction('review-store')
+        const reviewStore = tx.objectStore('review-store');
+        const index = reviewStore.index('reviewIndex');
+        // get restaurant_id of a specific number
+        return index.getAll(IDBKeyRange.only(+id)); 
+      });
+    }
+    // display the reviews when offline
+    function displayResult() {
+      getDbReview().then(reviews => {
+        console.log(null, reviews)
+        return callback(null, reviews);
+      });
     }
 
-});
 
-function getDbReview() {
-return dbPromise.then(db=>{
-   const tx = db.transaction('review-store')
-     .objectStore('review-store');
-     return tx.getAll();
-     });
-}
-
-function displayResult(){
-getDbReview().then(reviews =>{
-  return callback(null, reviews);
-});
-}
-
-  fetch(`${DBHelper.DATABASE_URL}/reviews/?restaurant_id=${id}`)
-  .then(function (response) {
-    const reviews = response.json();
-    return reviews;
-  }).then(reviews => {
-    dbPromise.then(db => {
-      const tx = db.transaction('review-store', 'readwrite');
-      const reviewStore = tx.objectStore('review-store');
-      for (const review of reviews) {
-        reviewStore.put(review);
-      }
-      return tx.complete;
-    }).then(() => {
-      console.log('reviews added');
-    });
-    return reviews;
-  }).then(function (reviews) {
-    return callback(null, reviews);
-  }).catch(() => {
-     return displayResult();
-  });
-}
-
+    fetch(`${DBHelper.DATABASE_URL}/reviews/?restaurant_id=${+id}`)
+      .then(function (response) {
+        const reviews = response.json();
+        return reviews;
+      }).then(reviews => {
+        dbPromise.then(db => {
+          //save reviews in db
+          const tx = db.transaction('review-store', 'readwrite');
+          const reviewStore = tx.objectStore('review-store');
+          for (const review of reviews) {
+            reviewStore.put(review);
+          }
+          return tx.complete;
+        });
+        return reviews;
+      }).then(function (reviews) {
+        return callback(null, reviews);
+      }).catch(() => {
+        return displayResult();
+      });
+  }
 
   /**
    * Fetch a restaurant by its ID.
@@ -142,9 +146,9 @@ getDbReview().then(reviews =>{
     });
   }
 
-    /**
-   * Fetch a review by its ID.
-   */
+  /**
+ * Fetch a review by its ID.
+ */
   static fetchReviewById(id, cb) {
     // fetch all reviews with proper error handling.
     DBHelper.fetchReviews((error, reviews) => {
@@ -160,7 +164,6 @@ getDbReview().then(reviews =>{
       }
     });
   }
-
 
   /**
    * Fetch restaurants by a cuisine type with proper error handling.
@@ -280,12 +283,62 @@ getDbReview().then(reviews =>{
   static imageSrcsetForRestaurant(restaurant) {
     return (`src/images/${restaurant.id}-300_small.jpg 300w, src/images/${restaurant.id}-600_medium_2x.jpg 600w, src/images/${restaurant.id}-800_large_2x.jpg 800w`);
   }
+
   /**
-  * Get Reviews for restaurants
-  */
-  // static reviewsForRestaurant(reviews){
-  //   return (`./restaurant.html?id=${reviews.id}/${reviews}/`);
-  // }
+  * Get Favorite restaurants
+  * /*
+* Mark favorite restaurant and add to favorite database and restaurant database
+* Get the favorites when offline from restaurnt databse 
+* put favorite when offline to database
+* send favorites to server from database when connected to network
+
+*/
+
+  static saveFavorite(id, isfavorite,) {
+
+  const url = `${DBHelper.DATABASE_URL}/restaurants/${id}/?is_favorite=${isfavorite}`
+  //const method = 'PUT';
+     
+    //DBHelper.addPendingOffline(url, method)
+    DBHelper.fetchRestaurantById(id, (error, restaurant) => {
+      if(error) return;
+      restaurant.is_favorite = isfavorite;
+      console.log(isfavorite);
+      dbPromise.then(db => {
+        const tx = db.transaction('restaurant-store', 'readwrite');
+        const restaurantStore = tx.objectStore('restaurant-store');
+
+        restaurantStore.put(restaurant).then(id => {
+          console.log(tx);
+          console.log(isfavorite);
+          console.log(url);
+          console.log(restaurant.is_favorite);
+          fetch(url, {
+            method: 'PUT'
+          });
+        });
+        return tx.complete && restaurant;
+      }).catch(()=> {
+      
+        DBHelper.fetchRestaurants(callback => {
+       return dbPromise.then(db => {
+            const tx = db.transaction('restaurant-store')
+            const restaurantStore = tx.objectStore('restaurant-store');
+            const index = restaurantStore.index('restaurantIndex');
+            const favs =  index.getAll('is_favorite');
+            
+            console.log(null, favs); 
+           return callback(null, favs )
+         });
+        }); 
+      console.log(restaurant.is_favorite);
+      return restaurant.is_favorite;
+    })
+  }
+ 
+)}
+
+
   /**
    * Map marker for a restaurant.
    */
@@ -300,6 +353,7 @@ getDbReview().then(reviews =>{
     marker.addTo(newMap);
     return marker;
   }
+
   /* static mapMarkerForRestaurant(restaurant, map) {
     const marker = new google.maps.Marker({
       position: restaurant.latlng,
@@ -310,7 +364,6 @@ getDbReview().then(reviews =>{
     );
     return marker;
   } */
-
 
 }
 

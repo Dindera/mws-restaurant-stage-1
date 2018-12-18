@@ -75,12 +75,72 @@ fetchRestaurantFromURL = (callback) => {
   }
 }
 
+fetchReviewsFromURL = (callback) => {
+  if (self.review) { // restaurant already fetched!
+    callback(null, self.review)
+    return;
+  }
+  const id = getParameterByName('id');
+  if (!id) { // no id found in URL
+    error = 'No restaurant id in URL'
+    callback(error, null);
+  } else {
+    DBHelper.fetchReviewById(id, (error, review) => {
+      self.restaurant = review;
+      if (!review) {
+        console.error(error);
+        return;
+      }
+      fillReviewsHTML();
+      callback(null, review);
+    });
+  }
+}
+
 /**
  * Create restaurant HTML and add it to the webpage
  */
 fillRestaurantHTML = (restaurant = self.restaurant) => {
   const name = document.getElementById('restaurant-name');
   name.innerHTML = restaurant.name;
+
+  const favorite = document.getElementById('is_favorite');
+  // favorite.setAttribute('role', 'checkbox');
+ 
+  if(restaurant.is_favorite == 'true' ){
+    console.log(restaurant.is_favorite)
+    favorite.checked = true;
+    favorite.setAttribute('aria-pressed', 'true');
+    favorite.innerHTML = `Remove ${restaurant.name} as a favorite`;
+    favorite.title = `Remove ${restaurant.name} as a favorite`;
+  } else{
+    console.log(restaurant.is_favorite)
+    favorite.checked = false;
+    favorite.setAttribute('aria-pressed', 'false');
+    favorite.innerHTML = `Add ${restaurant.name} as a favorite`;
+    favorite.title = `Add ${restaurant.name} as a favorite`;
+  }
+  console.log('Checked : ', favorite.checked);
+
+
+  favorite.addEventListener('click', () => {
+    console.log('Checked Click : ', favorite.checked);
+    if( favorite.checked){
+      favorite.setAttribute('aria-pressed', 'true');
+      favorite.innerHTML = `Remove ${restaurant.name} as a favorite`;
+      favorite.title = `Remove ${restaurant.name} as a favorite`; 
+     return DBHelper.saveFavorite(restaurant.id, 'true');  
+    }
+    else {
+      favorite.setAttribute('aria-pressed', 'false');
+      favorite.innerHTML = `Add ${restaurant.name} as a favorite`;
+      favorite.title = `Add ${restaurant.name} as a favorite`;     
+     return DBHelper.saveFavorite(restaurant.id, 'false');
+    }
+
+
+});
+
 
   const address = document.getElementById('restaurant-address');
   address.innerHTML = restaurant.address;
@@ -154,6 +214,7 @@ fillReviewsHTML = (error, reviews) => {
  */
 createReviewHTML = (review) => {
   const li = document.createElement('li');
+  
   const name = document.createElement('h3');
   name.innerHTML = review.name;
   name.className = 'review-name';
@@ -189,35 +250,51 @@ createReviewHTML = (review) => {
   date.className = 'review-date';
   li.appendChild(date);
 
-  // const date = document.createElement('p');
-  // date.className = 'date';
-  // date.innerHTML = review.date;
-  // li.appendChild(date);
-
-  // const div = document.createElement('div');
-  // div.append(name);
-  // div.append(date);
-  // div.className = 'review-info';
-  // li.appendChild(div);
-
-  // const rating = document.createElement('p');
-  // rating.innerHTML = `Rating: ${review.rating}`;
-  // rating.className = 'ratings'
-  // li.appendChild(rating);
-
-
-  // const comments = document.createElement('p');
-  // comments.innerHTML = review.comments;
-  // comments.className = 'comments'
-  // li.appendChild(comments);
-
   const comments = document.createElement('p');
   comments.classList.add('comments');
   comments.innerHTML = review.comments;
   li.appendChild(comments);
   return li;
+
+
 }
 
+const form = document.querySelector('form');
+form.addEventListener('submit', e  => {
+  e.preventDefault();
+const url = 'http://localhost:1337/reviews';
+const method = 'post';
+let formdata = new FormData(form);
+ let newReview = {
+   "id": formdata.get('id'),
+   "restaurant_id": self.restaurant.id,
+   "name": formdata.get('reviewName'),
+   "rating": formdata.get('reviewRate'),
+   "comments": formdata.get('comments'),
+   "createdAt": new Date()
+ }
+ fetch(url, {
+   method: method,
+   headers: { "Content-type": "application/json; charset=UTF-8" }, 
+   body: JSON.stringify(newReview)
+ }).then((res)=> {
+   const data = res.json();
+   fillReviewsHTML();
+   location.reload();
+   console.log('Received Data', data);
+   return data;
+ }).catch(err => {
+   dbPromise.then(db => {
+    const tx = db.transaction('review-store', 'readwrite');
+    const reviewStore = tx.objectStore('review-store');
+      reviewStore.put(newReview);
+      fillReviewsHTML();
+      location.reload();
+      console.log('Posting Offline', err);
+      return tx.complete;
+   })
+ })
+});
 /**
  * Add restaurant name to the breadcrumb navigation menu
  */
@@ -227,7 +304,6 @@ fillBreadcrumb = (restaurant=self.restaurant) => {
   li.innerHTML = restaurant.name;
   breadcrumb.appendChild(li);
 }
-
 /**
  * Get a parameter by name from page URL.
  */
