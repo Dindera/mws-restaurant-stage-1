@@ -53,7 +53,7 @@ gulp.task('sw', () =>{
 });
 
 gulp.task('copy-img', () =>{
-	gulp.src('src/**/*.{"png", "jpg","jpeg","svg"}')
+	gulp.src('src/**/*')
 		.pipe(gulp.dest('./dist/src'));
 });
 
