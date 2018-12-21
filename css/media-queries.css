@@ -108,7 +108,7 @@
        width: 100%;
     }
 
-    #restaurant-container, #reviews-container{
+    #restaurant-container, .reviews-container{
         max-width: 100% !important;
         margin: 0 auto;
     }
@@ -133,7 +133,7 @@
 
 @media screen and (min-width: 894px) and (max-width: 947px){
 
-    #restaurant-container, #reviews-container{
+    #restaurant-container, .reviews-container{
         max-width: 100%;
         margin: auto
     }

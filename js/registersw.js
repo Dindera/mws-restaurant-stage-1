@@ -1,5 +1,7 @@
-// // Check for service worker update
+
 // // const REPO =  '/restaurant-review-app/';
+
+
  const REPO =  '';
 
 const _updateReady = (worker) => {
@@ -19,7 +21,7 @@ const _updateReady = (worker) => {
   
 // // register service worker
 
-if ('serviceWorker' in navigator) {
+if ('serviceWorker' in navigator && 'SyncManager' in window) {
   
     navigator.serviceWorker.register('sw.js').then(reg => {
 
@@ -35,7 +37,7 @@ if ('serviceWorker' in navigator) {
         _trackInstalling(reg.installing);
         return;
     }
-    
+    // notify when update found  
     reg.addEventListener('updatefound', () => {
         console.log('UPDATE FOUND');
         _trackInstalling(reg.installing);
@@ -45,7 +47,6 @@ if ('serviceWorker' in navigator) {
     }).catch(error => {
             console.log(' Service Worker registeration failed', error);
             });
-    
 
     //Refresh only once
 

@@ -189,7 +189,6 @@ createRestaurantHTML = (restaurant) => {
 
   const favorite = document.createElement('input');
   favorite.className = "is_favorite";
-  //favorite.id ='is_favorite';
   favorite.setAttribute('role', 'checkbox');
   // favorite.setAttribute('aria-labelledby', 'Restaurant Favorite');
   favorite.type = "checkbox";
@@ -216,18 +215,19 @@ createRestaurantHTML = (restaurant) => {
 
   favorite.addEventListener('click', () => {
     console.log('Checked Click : ', favorite.checked);
+    
     if( favorite.checked){
       favorite.setAttribute('aria-checked', 'true');
       favorite.innerHTML = `Remove ${restaurant.name} as a favorite`;
       favorite.title = `Remove ${restaurant.name} as a favorite`; 
-      // doFavouriteBackgroundSync(restaurant.id);
+
      return DBHelper.saveFavorite(restaurant.id, 'true');  
     }
     else {
       favorite.setAttribute('aria-checked', 'false');
       favorite.innerHTML = `Add ${restaurant.name} as a favorite`;
       favorite.title = `Add ${restaurant.name} as a favorite`; 
-      // doFavouriteBackgroundSync(restaurant.id);
+
      return DBHelper.saveFavorite(restaurant.id, 'false');
     }
    });
@@ -250,9 +250,6 @@ createRestaurantHTML = (restaurant) => {
 
   return li
 }
-
-
-
 
 
 /**

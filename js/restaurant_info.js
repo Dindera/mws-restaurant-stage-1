@@ -86,7 +86,7 @@ fetchReviewsFromURL = (callback) => {
     callback(error, null);
   } else {
     DBHelper.fetchReviewById(id, (error, review) => {
-      self.restaurant = review;
+      self.review = review;
       if (!review) {
         console.error(error);
         return;
@@ -105,34 +105,34 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   name.innerHTML = restaurant.name;
 
   const favorite = document.getElementById('is_favorite');
-  // favorite.setAttribute('role', 'checkbox');
- 
+
+ // check if favorite is clicked, change attributes 
   if(restaurant.is_favorite == 'true' ){
     console.log(restaurant.is_favorite)
     favorite.checked = true;
-    favorite.setAttribute('aria-pressed', 'true');
+    favorite.setAttribute('aria-checked', 'true');
     favorite.innerHTML = `Remove ${restaurant.name} as a favorite`;
     favorite.title = `Remove ${restaurant.name} as a favorite`;
   } else{
     console.log(restaurant.is_favorite)
     favorite.checked = false;
-    favorite.setAttribute('aria-pressed', 'false');
+    favorite.setAttribute('aria-checked', 'false');
     favorite.innerHTML = `Add ${restaurant.name} as a favorite`;
     favorite.title = `Add ${restaurant.name} as a favorite`;
   }
   console.log('Checked : ', favorite.checked);
 
-
+// when favorite is clicked update server and change attributes
   favorite.addEventListener('click', () => {
     console.log('Checked Click : ', favorite.checked);
     if( favorite.checked){
-      favorite.setAttribute('aria-pressed', 'true');
+      favorite.setAttribute('aria-checked', 'true');
       favorite.innerHTML = `Remove ${restaurant.name} as a favorite`;
       favorite.title = `Remove ${restaurant.name} as a favorite`; 
      return DBHelper.saveFavorite(restaurant.id, 'true');  
     }
     else {
-      favorite.setAttribute('aria-pressed', 'false');
+      favorite.setAttribute('aria-checked', 'false');
       favorite.innerHTML = `Add ${restaurant.name} as a favorite`;
       favorite.title = `Add ${restaurant.name} as a favorite`;     
      return DBHelper.saveFavorite(restaurant.id, 'false');
@@ -190,10 +190,13 @@ fillReviewsHTML = (error, reviews) => {
   if (error) {
     console.log('No reviews', error);
   }
-  const container = document.getElementById('reviews-container');
+  const container = document.querySelector('.reviews-container');
   const title = document.createElement('h2');
+  title.setAttribute('tabindex', 0);
   title.innerHTML = 'Reviews';
   container.appendChild(title);
+
+  
 
   if (!reviews) {
     const noReviews = document.createElement('p');
@@ -207,6 +210,7 @@ fillReviewsHTML = (error, reviews) => {
     ul.appendChild(createReviewHTML(review));
   });
   container.appendChild(ul);
+
 }
 
 /**
@@ -259,42 +263,57 @@ createReviewHTML = (review) => {
 
 }
 
-const form = document.querySelector('form');
-form.addEventListener('submit', e  => {
-  e.preventDefault();
-const url = 'http://localhost:1337/reviews';
-const method = 'post';
-let formdata = new FormData(form);
- let newReview = {
-   "id": formdata.get('id'),
-   "restaurant_id": self.restaurant.id,
-   "name": formdata.get('reviewName'),
-   "rating": formdata.get('reviewRate'),
-   "comments": formdata.get('comments'),
-   "createdAt": new Date()
- }
- fetch(url, {
-   method: method,
-   headers: { "Content-type": "application/json; charset=UTF-8" }, 
-   body: JSON.stringify(newReview)
- }).then((res)=> {
-   const data = res.json();
-   fillReviewsHTML();
-   location.reload();
-   console.log('Received Data', data);
-   return data;
- }).catch(err => {
-   dbPromise.then(db => {
-    const tx = db.transaction('review-store', 'readwrite');
-    const reviewStore = tx.objectStore('review-store');
-      reviewStore.put(newReview);
-      fillReviewsHTML();
-      location.reload();
-      console.log('Posting Offline', err);
-      return tx.complete;
-   })
- })
+const button = document.querySelector('button');
+// reload to see review;
+button.addEventListener('click', e => {
+  return location.reload();
 });
+
+document.addEventListener('DOMContentLoaded', (e) => {
+// e.preventDefault();
+if('serviceWorker' in navigator){
+ 
+        navigator.serviceWorker.ready.then(swreg => { 
+          if('SyncManager' in window){
+            console.log('YESSSSSSSSSS Sync');
+            console.log(swreg);
+            const form = document.querySelector('form');
+
+            form.addEventListener('submit', e => {
+              e.preventDefault();
+              
+            const form = document.querySelector('form');
+          
+   
+            let formdata = new FormData(form);
+             let newReview = {
+          
+               "restaurant_id": self.restaurant.id,
+               "name": formdata.get('reviewName'),
+               "rating": formdata.get('reviewRate'),
+               "comments": formdata.get('comments'),
+               "createdAt": new Date(),
+               "updatedAt": new Date()
+               
+             }
+              dbPromise.then(db => {
+                // const fx = db.transaction('review-store', 'readwrite');
+                const tx = db.transaction('offline-store', 'readwrite');
+                return tx.objectStore('offline-store').put(newReview);
+               }).then(()=> {
+                return swreg.sync.register('reviewSync');
+               }).catch(err => {
+                console.log(err);
+                form.submit();
+                return swreg.sync.register('reviewSync');
+               });
+            // })
+          });          
+        }
+     });
+   }
+});
+
 /**
  * Add restaurant name to the breadcrumb navigation menu
  */

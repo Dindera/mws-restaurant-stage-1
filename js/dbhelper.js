@@ -21,8 +21,8 @@ const dbPromise = idb.open('restaurant-db', 4, function (upgradeDB) {
       reviewStore.createIndex('reviewIndex', 'restaurant_id');
       upgradeDB.createObjectStore('favorite-store', { keyPath: 'is_favorite' });
       case 2: 
-      upgradeDB.createObjectStore('offline-store', {keyPath: 'id', autoIncrement: true});
-
+      let offlineStore = upgradeDB.createObjectStore('offline-store', {keyPath: 'name', autoIncrement: true});
+        offlineStore.createIndex('offlineIndex', 'restaurant_id');
   }
 
 });
@@ -63,7 +63,7 @@ class DBHelper {
       });
     }
 
-
+// fetch Restaurant
     fetch(`${DBHelper.DATABASE_URL}/restaurants/`)
       .then(function (response) {
         const restaurants = response.json();
@@ -87,20 +87,42 @@ class DBHelper {
 
   static fetchReviews(id, callback) {
 
+    function countCursor()  {
+      dbPromise.then(db=> {
+        let tx = db.transaction('review-store', 'readwrite');
+        let store = tx.objectStore('review-store');
+         store.index('reviewIndex').openCursor().then(cursor=> {
+           return cursor.advance(15);
+         }).then(function deleteRest(cursor){
+           if(!cursor) return;
+           cursor.delete();
+           cursor.continue().then(deleteRest);
+         });
+      })
+    }
+
+    function getOfllineStore(){
+      return dbPromise.then(db => {
+        const tx = db.transaction('offline-store')
+        const offlineStore = tx.objectStore('offline-store');
+        const index = offlineStore.index('offlineIndex');
+        return index.getAll().then(offReviews => {
+          console.log(null, offReviews);
+           callback(null, offReviews);
+        })
+      })
+    }
+    // display the reviews when offline
     function getDbReview() {
       return dbPromise.then(db => {
         const tx = db.transaction('review-store')
         const reviewStore = tx.objectStore('review-store');
         const index = reviewStore.index('reviewIndex');
         // get restaurant_id of a specific number
-        return index.getAll(IDBKeyRange.only(+id)); 
-      });
-    }
-    // display the reviews when offline
-    function displayResult() {
-      getDbReview().then(reviews => {
-        console.log(null, reviews)
-        return callback(null, reviews);
+        return index.getAll(IDBKeyRange.only(+id)).then(reviews => {
+            console.log(null, reviews)
+           callback(null, reviews);
+          }); 
       });
     }
 
@@ -121,11 +143,13 @@ class DBHelper {
         });
         return reviews;
       }).then(function (reviews) {
+        countCursor()
         return callback(null, reviews);
       }).catch(() => {
-        return displayResult();
+        return getDbReview() && getOfllineStore();
       });
   }
+
 
   /**
    * Fetch a restaurant by its ID.
@@ -254,6 +278,7 @@ class DBHelper {
     });
   }
 
+
   /**
    * Restaurant page URL.
    */
@@ -297,7 +322,6 @@ class DBHelper {
   static saveFavorite(id, isfavorite,) {
 
   const url = `${DBHelper.DATABASE_URL}/restaurants/${id}/?is_favorite=${isfavorite}`
-  //const method = 'PUT';
      
     //DBHelper.addPendingOffline(url, method)
     DBHelper.fetchRestaurantById(id, (error, restaurant) => {
@@ -307,7 +331,8 @@ class DBHelper {
       dbPromise.then(db => {
         const tx = db.transaction('restaurant-store', 'readwrite');
         const restaurantStore = tx.objectStore('restaurant-store');
-
+        console.log(url);
+        
         restaurantStore.put(restaurant).then(id => {
           console.log(tx);
           console.log(isfavorite);
@@ -315,20 +340,21 @@ class DBHelper {
           console.log(restaurant.is_favorite);
           fetch(url, {
             method: 'PUT'
-          });
+          })
         });
         return tx.complete && restaurant;
-      }).catch(()=> {
+      }).catch((callback)=> {
       
         DBHelper.fetchRestaurants(callback => {
        return dbPromise.then(db => {
-            const tx = db.transaction('restaurant-store')
+            const tx = db.transaction('restaurant-store', 'readwrite');
+       
             const restaurantStore = tx.objectStore('restaurant-store');
-            const index = restaurantStore.index('restaurantIndex');
+            const index = restaurantStore.index('restaurantIndex', 'readwrite');
             const favs =  index.getAll('is_favorite');
-            
+           
             console.log(null, favs); 
-           return callback(null, favs )
+           return callback(null, favs);
          });
         }); 
       console.log(restaurant.is_favorite);
@@ -337,7 +363,6 @@ class DBHelper {
   }
  
 )}
-
 
   /**
    * Map marker for a restaurant.

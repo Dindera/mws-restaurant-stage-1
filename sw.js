@@ -1,3 +1,6 @@
+self.importScripts('/js/idb.js');
+self.importScripts('/js/dbhelper.js');
+
 
 const CACHENAME = "restaurant_app_v1";
 const CACHE_PHOTOS = 'restaurant-app-photos'; 
@@ -86,9 +89,6 @@ self.addEventListener("fetch", event => {
     } else {
         // handle other request from  this site
         event.respondWith(caches.match(event.request)
-        // .then(res => {
-        //     return res || fetch(event.request);
-        // })
     );
     }   
        return;
@@ -98,6 +98,60 @@ self.addEventListener("fetch", event => {
                 return response || fetch(event.request);
             })
         );
+});
+
+
+self.addEventListener('sync', event => {
+    const synctag = event.tag;
+    // Check if Sync name is present
+   if(synctag.startsWith('reviewSync')){
+        console.log('sync fired!');
+       event.waitUntil(
+     dbPromise.then(db => {
+         const tx = db.transaction('offline-store', 'readonly');
+         const offlineStore = tx.objectStore('offline-store');
+        
+          return offlineStore.getAll().then(offlineStore => {
+          console.log(offlineStore)
+            return offlineStore
+        }).then((reviews) => {
+            // Post data from store to server
+            return Promise.all(reviews.map(review  => {
+              return fetch('http://localhost:1337/reviews/', {
+                  method: 'post',
+                  body: JSON.stringify(review),
+                  headers: {
+                      'Content-Type': 'application/json', 
+                      'Accept': 'application/json',
+                    }
+              }).then(response=> {
+                  const res = response.json();
+                  console.log('Response of Post', res);
+                  return res;
+              }).then(data => {
+                console.log('Response of Data', data);
+                dbPromise.then(db => {
+                    const tx = db.transaction('review-store', 'readwrite');
+                    const fx = db.transaction('offline-store', 'readwrite');
+                    const deleteStore = fx.objectStore('offline-store');
+                    const reviewStore = tx.objectStore('review-store');
+                    reviewStore.put(data);
+                    //delete store
+                    const reQ = deleteStore.delete(review.name);
+
+                    reQ.onsuccess = e => {
+                        console.log('Successfully deleted');
+                    }
+                });    
+                return data;    
+              });         
+          })).catch(err => {
+            console.log(err);
+        })
+        })
+     }).catch()
+     )
+  }
 });
 
 
