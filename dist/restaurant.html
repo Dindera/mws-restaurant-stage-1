@@ -20,7 +20,7 @@
   <header>
     <!-- Beginning nav -->
     <nav>
-      <img src="/src/cutlery.svg" style="width: 70px;"><h1><a href="/">Restaurant Reviews</a></h1>
+      <img src="/src/cutlery.svg" style="width: 70px;" alt="Restaurant Review Logo"><h1><a href="/">Restaurant Reviews</a></h1>
     </nav>
     <!-- Beginning breadcrumb -->
     <ul id="breadcrumb" aria-label=Breadcrumb>
@@ -55,29 +55,29 @@
     </section>
     <!-- end restaurant -->
     <!-- Beginning reviews -->
-    <section id="reviews-container" role="presentation">
+    <section class="reviews-container" role="presentation">
       <div id="reviews-header"></div>
       <ul id="reviews-list" role="list"></ul>
     </section>
-    <section id="reviews-container" role="presentation">
+    <section class="reviews-container" role="presentation">
      <div id="reviews-info">
        <h2 id="addReview">Add Review</h2>
         <form id="newReview" role="form">
             <input type="hidden" value=`${id}` name="id" id="id">
-            <label>
+            <label for="name"></label>
               <input type="text" name="reviewName" id="name" placeholder="Your Name" role="textbox" required>
-            </label>
-            <label>
-              <input type="number" name="reviewRate" id="rate" placeholder="Rating" role="textbox" required>
-            </label><br>
-            <label>
-            <textarea name="comments"  placeholder="Write your comments here.." id="comments" role="textbox" required></textarea>
-            </label>
+            
+            <label for="rate"></label>
+              <input type="number"  name="reviewRate" id="rate" placeholder="Rating" role="textbox" required>
             <br>
-            <label>
-                <button id="submit" type="submit">Submit</button>
+            <label for="comments"></label>
+            <textarea name="comments"  placeholder="Write your comments here.." id="comments" role="textbox" required></textarea>
+            
+            <br>
+            <label> </label>
+                <button id="submit" type="submit" aria-label="Submit">Submit</button>
                 
-            </label>
+
           </form>
      </div>
     </section>
