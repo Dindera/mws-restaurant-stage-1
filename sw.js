@@ -149,7 +149,7 @@ self.addEventListener('sync', event => {
             console.log(err);
         })
         })
-     }).catch()
+     })
      )
   }
 });
