@@ -30,15 +30,6 @@
       
 }
 
-/* @media screen and (max-width: 523px){
-    nav h1 {
-        /* margin: auto; */
-/*        
-        padding: 0;
-       } */
-/* }  */
-
-
 @media screen and (max-width: 430px){
     .review-info .review-name{
         width: 100%;
@@ -65,9 +56,7 @@
         height: 20%;
         position: absolute;
     }
-    /* #restaurant-container, #reviews-container{
-        width: 80%;
-    } */
+
     #footer{
         font-size: 10pt;  
        }
@@ -141,9 +130,6 @@
     #restaurants-list li{
         width: 350px;
     }
-    /* #restaurant-img, #restaurant-cuisine  {
-        max-width: 80%;
-    } */
   
 }
 

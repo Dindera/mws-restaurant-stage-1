@@ -180,6 +180,7 @@ createRestaurantHTML = (restaurant) => {
   li.append(divInfo);
   
   const name = document.createElement('h2');
+  // name.className = 'restaurant-name';
   name.innerHTML = restaurant.name;
   divInfo.append(name);
 

@@ -172,12 +172,13 @@ nav h1 a {
   background-color: #ccc;
   display: block;
   max-width: 100%;
-  min-height: 248px;
+  max-height: 100%;
+  min-height: 100%;
   min-width: 100%;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
 }
-#restaurants-list li h1 {
+#restaurants-list li h2 {
   color: #39324D;
   font-family: Arial,sans-serif;
   font-size: 14pt;
@@ -267,6 +268,13 @@ tr td:nth-child(odd){
   text-transform: uppercase;
   line-height: 1.1;
 }
+
+/* .restaurant-name{
+  font-family: Arial,sans-serif;
+  font-size: 10pt;
+  font-weight: 200;
+} */
+
 #restaurant-img {
 	width: 95%;
 }
@@ -337,6 +345,8 @@ tr td:nth-child(odd){
   line-height: 1;
   margin: 10px;
 }
+
+
 
 .review-info{
   display: flex;

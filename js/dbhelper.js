@@ -146,6 +146,7 @@ class DBHelper {
         countCursor()
         return callback(null, reviews);
       }).catch(() => {
+        countCursor()
         return getDbReview() && getOfllineStore();
       });
   }
