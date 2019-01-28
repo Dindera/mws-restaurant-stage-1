@@ -2,7 +2,7 @@
 // // const REPO =  '/restaurant-review-app/';
 
 
- const REPO =  '';
+ const REPO =  'restaurantreviews-app.herokuapp.com/';
 
 const _updateReady = (worker) => {
       console.log('New Version Available');
@@ -23,7 +23,7 @@ const _updateReady = (worker) => {
 
 if ('serviceWorker' in navigator && 'SyncManager' in window) {
   
-    navigator.serviceWorker.register('sw.js').then(reg => {
+    navigator.serviceWorker.register(REPO+'sw.js').then(reg => {
 
 
     
