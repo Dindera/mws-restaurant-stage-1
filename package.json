@@ -30,8 +30,8 @@
   "main": "server/app.js",
   "scripts": {
     "test": "tap test/*.js",
-    "debug": "node debug server/app.js",
-    "start": "node server/app.js"
+    "debug": "node debug app.js",
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
