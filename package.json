@@ -29,7 +29,9 @@
   "description": "---\r #### _Three Stage Course Material Project - Restaurant Reviews_",
   "main": "Gruntfile.js",
   "scripts": {
-    "test": "tap test/*.js"
+    "test": "tap test/*.js",
+    "debug": "node debug server/app.js",
+    "start": "node server/app.js"
   },
   "repository": {
     "type": "git",
