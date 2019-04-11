@@ -4,7 +4,7 @@ self.importScripts('/js/dbhelper.js');
 
 const CACHENAME = "restaurant_app_v1";
 const CACHE_PHOTOS = 'restaurant-app-photos'; 
-const REPO = "restaurantreviews-app.herokuapp.com";
+const REPO = "";
 const ALLCACHE = [
     CACHENAME, 
     CACHE_PHOTOS

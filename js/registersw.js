@@ -2,7 +2,7 @@
 // // const REPO =  '/restaurant-review-app/';
 
 
- const REPO =  'restaurantreviews-app.herokuapp.com/';
+ const REPO =  '';
 
 const _updateReady = (worker) => {
       console.log('New Version Available');

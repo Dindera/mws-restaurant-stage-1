@@ -76,4 +76,6 @@ gulp.task('scripts-dist', () =>{
 
 });
 
+gulp.task('build', ['dist']);
+
 
